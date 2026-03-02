@@ -15,9 +15,11 @@ pipeline {
 
         stage('Restore & Build') {
             steps {
-                echo 'Build solution...'
-                sh 'dotnet restore'
-                sh 'dotnet build --configuration Release'
+                dir('EduPortal') {
+                    echo 'Build solution...'
+                    sh 'dotnet restore'
+                    sh 'dotnet build --configuration Release'
+                }
             }
         }
 
