@@ -1,0 +1,104 @@
+﻿@model EduPortal.Logic.DTOs.CourseDetailsDTOs.CourseDetailsDTO
+@using EduPortal.Logic.DTOs.SharedDTO
+@using EduPortal.Data.Models.Enum
+
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<div class="container my-4" style="max-width: 900px;">
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show"
+             role="alert"
+             id="successAlert"
+             data-autohide
+             data-delay="3000">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h2 class="card-title mb-2">@Model.CourseName</h2>
+            <h6 class="card-subtitle text-muted mb-3">By: @Model.CreatorName</h6>
+            <p class="card-text"><strong>Description:</strong> @Model.CourseDescription</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h4 class="card-title mb-3">Skills</h4>
+            @if (Model.Skills.Any())
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var skill in Model.Skills)
+                    {
+                        <li class="list-group-item">@skill.SkillName</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="text-muted">No skills assigned.</p>
+            }
+        </div>
+    </div>
+
+    <!-- Materials Card -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h4 class="card-title mb-3">Materials</h4>
+            @if (Model.Materials.Any())
+            {
+                <div class="row">
+                    @foreach (var material in Model.Materials)
+                    {
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        @material.MaterialName
+                                        <small class="text-muted">(@material.MaterialType)</small>
+                                    </h5>
+
+                                    @switch (material.MaterialType)
+                                    {
+                                        case MaterialType.Book:
+                                            <p><strong>Author:</strong> @material.Author</p>
+                                            <p><strong>Pages:</strong> @material.NumberOfPages</p>
+                                            <p><strong>Year:</strong> @material.PublicationYear</p>
+                                            break;
+
+                                        case MaterialType.Article:
+                                            <p><strong>Year:</strong> @material.PublicationYear</p>
+                                            <p><strong>Resource:</strong> <a href="@material.ResourceUrl" target="_blank">@material.ResourceUrl</a></p>
+                                            break;
+
+                                        case MaterialType.Video:
+                                            <p><strong>Duration:</strong> @(TimeSpan.FromSeconds(material.DurationInSeconds).ToString(@"hh\:mm\:ss"))</p>
+                                            <p><strong>Quality:</strong> @material.Quality</p>
+                                            <p><strong>Resource:</strong> <a href="@material.ResourceUrl" target="_blank">@material.ResourceUrl</a></p>
+                                            break;
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">No materials added.</p>
+            }
+        </div>
+    </div>
+
+    <div class="text-end">
+        <a asp-controller="Dashboard" asp-action="Index" class="btn btn-secondary" data-testid = "ret-dashboard">
+            ← Return to Dashboard
+        </a>
+    </div>
+</div>

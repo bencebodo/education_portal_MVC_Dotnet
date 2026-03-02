@@ -1,0 +1,83 @@
+﻿@using EduPortal.Logic.DTOs.ProfileDetailsDTO
+@model ProfileDetailDTO
+
+@{
+    ViewData["Title"] = "User";
+}
+
+<div class="container my-4">
+    <div class="card shadow-sm border-success" style="max-width: 800px; margin: 0 auto;">
+        <div class="card-body text-center">
+
+            <img src="~/images/profile/BUProfile.svg"
+                 alt="@Model.FirstName"
+                 class="rounded-circle mb-3 border border-success"
+                 style="width:140px; height:140px; object-fit:cover;" />
+
+            <h2 class="card-title text-success mb-1">Hello, @Model.FirstName!</h2>
+            <p class="text-muted mb-4">Profile details</p>
+
+            <hr class="border-success" />
+
+            <ul class="list-group list-group-flush text-start">
+                <li class="list-group-item">
+                    <strong>Name:</strong> @Model.FirstName @Model.LastName
+                </li>
+                <li class="list-group-item">
+                    <strong>Email:</strong> @Model.Email
+                </li>
+                <li class="list-group-item">
+                    <strong>Date of Birth:</strong> @Model.DateOfBirth.ToShortDateString()
+                </li>
+                <li class="list-group-item">
+                    <strong>Ongoing Courses:</strong>
+                    @if (Model.CoursesEnrolled != null && Model.CoursesEnrolled.Any())
+                    {
+                        <ul class="mt-2">
+                            @foreach (var c in Model.CoursesEnrolled)
+                            {
+                                <li>@c.CourseName</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span class="text-muted">User has no ongoing courses.</span>
+                    }
+                </li>
+                <li class="list-group-item">
+                    <strong>Completed Courses:</strong>
+                    @if (Model.CompletedCourses != null && Model.CompletedCourses.Any())
+                    {
+                        <ul class="mt-2">
+                            @foreach (var c in Model.CompletedCourses)
+                            {
+                                <li>@c.CourseName</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span class="text-muted">User has no completed courses yet.</span>
+                    }
+                </li>
+                <li class="list-group-item">
+                    <strong>Skills:</strong>
+                    @if (Model.SkillsWithLevel != null && Model.SkillsWithLevel.Any())
+                    {
+                        <ul class="mt-2">
+                            @foreach (var skill in Model.SkillsWithLevel)
+                            {
+                                <li>@skill.Key (Level: @skill.Value)</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span class="text-muted">User has no skills yet.</span>
+                    }
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

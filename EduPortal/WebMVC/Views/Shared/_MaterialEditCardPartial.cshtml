@@ -1,0 +1,103 @@
+﻿@model EduPortal.Logic.DTOs.SharedDTO.MaterialDTO
+@using EduPortal.Data.Models.Enum
+
+<div id="new-material-form" class="card card-body bg-light mb-3 ignore-validate">
+    <div class="mb-3">
+        <label class="form-label fw-bold">Material type</label>
+        <select asp-for="MaterialType" class="form-select" id="material-type-selector">
+            @foreach (var value in Enum.GetValues(typeof(MaterialType)))
+            {
+                <option value="@((int)value)">@value</option>
+            }
+        </select>
+        <span asp-validation-for="MaterialType" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Name</label>
+        <input asp-for="MaterialName" class="form-control"/>
+        <span asp-validation-for="MaterialName" class="text-danger"></span>
+    </div>
+
+    <!-- Video Fields -->
+    <div class="material-type-fields" data-type="0" style="display:none;">
+        <div class="mb-2">
+            <label>Resource URL</label>
+            <input asp-for="ResourceUrl" class="form-control"/>
+            <span asp-validation-for="ResourceUrl" class="text-danger"></span>
+        </div>
+        <div class="mb-2">
+            <label>Duration</label>
+            <div class="d-flex gap-2">
+                <input type="number" id="video-duration-minutes" min="0" class="form-control" placeholder="Minutes" />
+                <input type="number" id="video-duration-seconds" min="0" max="59" class="form-control" placeholder="Seconds" />
+            </div>
+			<span asp-validation-for="Duration" class="text-danger"></span>
+        </div>
+        <div class="mb-2">
+            <label>Quality</label>
+            <input asp-for="Quality" class="form-control"/>
+            <span asp-validation-for="Quality" class="text-danger"></span>
+
+        </div>
+    </div>
+
+    <!-- Article Fields -->
+    <div class="material-type-fields" data-type="1" style="display:none;">
+        <div class="mb-2">
+            <label>Resource URL</label>
+            <input asp-for="ResourceUrl" class="form-control"/>
+            <span asp-validation-for="ResourceUrl" class="text-danger"></span>
+        </div>
+        <div class="mb-2">
+            <label>Publication year</label>
+            <input asp-for="PublicationYear" class="form-control"/>
+            <span asp-validation-for="PublicationYear"  name="ArticlePublicationYear" class="text-danger"></span>
+        </div>
+    </div>
+
+    <!-- Book Fields -->
+    <div class="material-type-fields" data-type="2" style="display:none;">
+        <div class="mb-2">
+            <label>Book title</label>
+            <input asp-for="BookTitle" class="form-control"/>
+            <span asp-validation-for="BookTitle" class="text-danger"></span>
+        </div>
+        <div class="mb-2">
+            <label>Author</label>
+            <input asp-for="Author" class="form-control"/>
+            <span asp-validation-for="Author" class="text-danger"></span>
+        </div>
+        <div class="mb-2">
+            <label>Number of pages</label>
+            <input asp-for="NumberOfPages" class="form-control"/>
+            <span asp-validation-for="NumberOfPages" class="text-danger"></span>
+        </div>
+        <div class="mb-2">
+            <label>Publication year</label>
+            <input asp-for="PublicationYear" class="form-control"/>
+            <span asp-validation-for="PublicationYear" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label for="BookFile" class="form-label">Upload Book File</label>
+            <input type="file" class="form-control" asp-for="BookFile" id="BookFile"/>
+			<span asp-validation-for="BookFile" class="text-danger"></span>
+        </div>
+        <input type="hidden" asp-for="Format" />
+        <input type="hidden" asp-for="FilePath" />
+
+        @if (!string.IsNullOrEmpty(Model.FilePath))
+        {
+            <div class="mt-2">
+                <a href="@Model.FilePath" target="_blank" class="btn btn-outline-success btn-sm">
+                    Download current file (@Model.Format)
+                </a>
+            </div>
+        }
+    </div>
+
+    <div class="mt-2">
+        <button type="button" class="btn btn-success me-2" onclick="saveNewMaterial()">Save Material</button>
+        <button type="button" class="btn btn-secondary" onclick="cancelNewMaterial()">Cancel</button>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+﻿@using EduPortal.WebMVC.Models
+@model ErrorViewModel
+
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="container my-5">
+    <div class="card shadow border-danger mx-auto" style="max-width: 600px;">
+        <div class="card-body text-center">
+            <h1 class="card-title text-danger mb-3">Oops!</h1>
+            <h4 class="card-subtitle mb-3 text-muted">An error occurred while processing your request.</h4>
+
+            @if (Model.ShowRequestId)
+            {
+                <p class="mb-2">
+                    <strong>Request ID:</strong> <code>@Model.RequestId</code>
+                </p>
+            }
+
+            <p class="mb-4 text-muted">
+                @if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                {
+                    <span>Development mode is enabled: more detailed error info is shown in the console or logs.</span>
+                }
+                else
+                {
+                    <span>The error occurred. Please try again later or contact support.</span>
+                }
+            </p>
+
+            <a asp-controller="Home" asp-action="Index" class="btn btn-success fw-semibold">
+                ← Back to Home
+            </a>
+        </div>
+    </div>
+</div>
