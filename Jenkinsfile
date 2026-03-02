@@ -22,12 +22,20 @@ pipeline {
                 }
             }
         }
-        //trigger
-        stage('Run Tests') {
+        stage('Unit tests') {
             steps {
-                dir('EduPortal') {
-                echo 'Test starts...'
-                sh 'dotnet test --no-build --configuration Release'
+                updateGitHubStatus('ci/jenkins/unit-tests', 'Unit tests started...', 'PENDING')
+        
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh 'dotnet test EduPortal.UnitTests/EduPortal.UnitTests.csproj'
+                }
+        
+                script {
+                    if (currentBuild.result == 'FAILURE') {
+                        updateGitHubStatus('ci/jenkins/unit-tests', 'Unit tests failed!', 'FAILURE')
+                    } else {
+                        updateGitHubStatus('ci/jenkins/unit-tests', 'Unit tests passed!', 'SUCCESS')
+                    }
                 }
             }
         }
