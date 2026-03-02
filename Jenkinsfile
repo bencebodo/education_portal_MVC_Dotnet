@@ -50,7 +50,21 @@ pipeline {
 }
 
 def updateGitHubStatus(String contextName, String msg, String state) {
-    step([$class: 'GitHubCommitStatusSetter',
-          contextSource: [$class: 'StaticContextSource', context: contextName],
-          statusResultSource: [$class: 'ConditionalStatusResultSource', 
-          results: [[$class: 'AnyBuildResult', message: msg, state: state]]]])
+    step([
+        $class: 'GitHubCommitStatusSetter',
+        contextSource: [
+            $class: 'StaticContextSource', 
+            context: contextName
+        ],
+        statusResultSource: [
+            $class: 'ConditionalStatusResultSource', 
+            results: [
+                [
+                    $class: 'AnyBuildResult', 
+                    message: msg, 
+                    state: state
+                ]
+            ]
+        ]
+    ])
+}
