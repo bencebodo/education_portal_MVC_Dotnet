@@ -1,0 +1,62 @@
+﻿@using EduPortal.Logic.DTOs.SharedDTO
+@model CourseListItemDTO
+
+<div class="card shadow-sm course-card @(ViewData["CardContext"] as string)" data-testid="course-card-@Model.CourseId">
+    <div class="card-body d-flex flex-column">
+        
+        <h5 class="card-title" data-testid="course-title-@Model.CourseId">@Model.CourseName</h5>
+        
+        <h6 class="card-subtitle mb-2 text-muted">By: @Model.CreatorName</h6>
+        <p class="card-text course-description" title="@Model.CourseDescription">
+            @Model.CourseDescription
+        </p>
+        <p class="card-text">
+            <small>@Model.SkillsCount skills | @Model.MaterialCount materials</small>
+        </p>
+
+        <div class="mt-auto pt-3">
+            <div class="normal-view">
+                @if (Model.IsCompleted)
+                {
+                    <div class="alert alert-success py-2 mb-2">✔️ Completed</div>
+                    <a asp-controller="Course" asp-action="Details" asp-route-id="@Model.CourseId"
+                       class="btn btn-outline-success w-100" data-testid="review-course-btn-@Model.CourseId">Review Course</a>
+                }
+                else if (Model.IsEnrolled)
+                {
+                    <div class="progress mb-2" style="height: 20px;">
+                        <div class="progress-bar" role="progressbar"
+                             style="width: @(Model.ProgressPercentage.ToString("0"))%;"
+                             aria-valuenow="@Model.ProgressPercentage" aria-valuemin="0" aria-valuemax="100"
+                             data-testid="course-progress-@Model.CourseId">
+                            @Model.ProgressPercentage.ToString("0")%
+                        </div>
+                    </div>
+                    <a asp-controller="Course" asp-action="Index" asp-route-id="@Model.CourseId"
+                       class="btn btn-success w-100" data-testid="continue-course-btn-@Model.CourseId">Continue Course</a>
+                }
+                else
+                {
+                    <form asp-controller="Dashboard" asp-action="EnrollCourse" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="courseId" value="@Model.CourseId" />
+                        <button type="submit" class="btn btn-success w-100" data-testid="start-course-btn-@Model.CourseId">Start Course</button>
+                    </form>
+                }
+            </div>
+
+            <div class="editor-view d-none">
+                <div class="d-flex gap-2">
+                    <a asp-controller="Course" asp-action="Edit" asp-route-id="@Model.CourseId"
+                       class="btn btn-primary flex-fill" data-testid="edit-course-btn-@Model.CourseId">Edit</a>
+
+                    <form asp-controller="Course" asp-action="DeleteCourse" method="post" class="flex-fill">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="CourseId" value="@Model.CourseId" />
+                        <button type="submit" class="btn btn-danger w-100" data-testid="delete-course-btn-@Model.CourseId">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

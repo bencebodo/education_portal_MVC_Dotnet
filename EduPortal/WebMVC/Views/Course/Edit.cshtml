@@ -1,0 +1,154 @@
+﻿@model EduPortal.Logic.DTOs.CourseDetailsDTOs.CourseDetailsDTO
+@using EduPortal.Logic.DTOs.SharedDTO
+@using EduPortal.Data.Models.Enum
+
+@{
+    ViewData["Title"] = Model.CourseId == 0 ? "Create Course" : "Edit Course";
+}
+
+@if (TempData["CourseError"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" data-testid="course-error-alert">
+        @TempData["CourseError"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="container my-4" style="max-width: 900px;">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
+
+    <form asp-action="Edit" method="post" id="course-form" enctype="multipart/form-data" novalidate>
+        <input type="hidden" asp-for="CourseId" />
+        <input type="hidden" asp-for="CreatorId" />
+
+        <div class="mb-4 p-3 border rounded bg-light">
+            <div class="mb-3">
+                <label class="form-label">Course name</label>
+                <input asp-for="CourseName" class="form-control" data-testid="course-name-input" />
+                <span asp-validation-for="CourseName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Course description</label>
+                <textarea asp-for="CourseDescription" class="form-control" rows="3" data-testid="course-description-input"></textarea>
+                <span asp-validation-for="CourseDescription" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-4 p-3 border rounded bg-light">
+            <h4>Skills</h4>
+            <div id="skills-container" class="mb-2" data-testid="skills-list-container">
+                @for (int i = 0; i < Model.Skills.Count; i++)
+                {
+                    <div class="skill-item d-flex align-items-center p-2 border rounded mb-2" data-testid="skill-item-@i">
+                        <input type="hidden" asp-for="Skills[i].SkillId" />
+                        <input type="hidden" asp-for="Skills[i].SkillName" />
+                        <span class="flex-grow-1 me-2" data-testid="skill-name-@i">@Model.Skills[i].SkillName</span>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeSkill(this)" data-testid="delete-skill-btn-@i">Delete</button>
+                    </div>
+                }
+            </div>
+
+            <ul class="nav nav-tabs mb-2" id="skillsTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#existingSkills" type="button" data-testid="tab-existing-skills">Add Existing Skill</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#newSkill" type="button" data-testid="tab-new-skill">Add New Skill</button>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="existingSkills">
+                    <div id="existing-skills-list" data-testid="existing-skills-wrapper"></div>
+                </div>
+                <div class="tab-pane fade" id="newSkill">
+                    <div class="input-group mb-2">
+                        <input type="text" id="new-skill-name" class="form-control" placeholder="Skill Name" data-testid="new-skill-input" />
+                        <button type="button" class="btn btn-success" onclick="addNewSkill()" data-testid="add-new-skill-btn">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4 p-3 border rounded bg-light">
+            <h4>Materials</h4>
+            <div id="materials-container" class="mb-2" data-testid="materials-list-container">
+                @for (int i = 0; i < Model.Materials.Count; i++)
+                {
+                    <div class="material-list-item d-flex justify-content-between align-items-center p-2 border rounded mb-2" data-index="@i" data-testid="material-item-@i">
+                        <div class="d-flex align-items-center">
+                            <span class="drag-handle me-2" style="cursor: grab;" data-testid="drag-handle-@i">☰</span>
+                            <span>@Model.Materials[i].MaterialName (@Model.Materials[i].MaterialType.ToString())</span>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteMaterial(@i)" data-testid="delete-material-btn-@i">Delete</button>
+                        </div>
+                        <input type="hidden" name="Materials[@i].MaterialId" value="@Model.Materials[i].MaterialId" />
+                    </div>
+                }
+            </div>
+
+            <ul class="nav nav-tabs mb-2" id="materialsTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#existingMaterials" type="button" data-testid="tab-existing-materials">Add Existing Material</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#newMaterial" type="button" data-testid="tab-new-material">Add New Material</button>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="existingMaterials">
+                    <div id="existing-materials-list" data-testid="existing-materials-wrapper"></div>
+                </div>
+                <div class="tab-pane fade" id="newMaterial">
+                    <partial name="_MaterialEditCardPartial" model="new MaterialDTO()" />
+                </div>
+            </div>
+        </div>
+
+        <div class="text-end mt-3">
+            <button type="submit" class="btn btn-success" data-testid="save-course-submit-btn">Save Course</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script>
+        let materials = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Materials ?? new List<MaterialDTO>()));
+        let skills = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Skills ?? new List<SkillDTO>()));
+
+                 $(function () {
+
+            $.validator.setDefaults({ ignore: ":hidden, .ignore-validate :input" });
+            const courseForm = $("#course-form");
+            courseForm.validate().settings.ignore = ":hidden, .ignore-validate :input";
+
+            document.getElementById('course-form').addEventListener('submit', submitCourseForm);
+
+            fetch('@Url.Action("BrowseSkills")')
+                .then(r => r.text())
+                .then(html => document.getElementById('existing-skills-list').innerHTML = html);
+
+            fetch('@Url.Action("BrowseMaterials")')
+                .then(r => r.text())
+                .then(html => document.getElementById('existing-materials-list').innerHTML = html);
+
+            new Sortable(document.getElementById('materials-container'), {
+                handle: '.drag-handle',
+                animation: 150,
+                onEnd(evt) {
+                    const moved = materials.splice(evt.oldIndex, 1)[0];
+                    materials.splice(evt.newIndex, 0, moved);
+                    materials.forEach((m, i) => m.MaterialOrder = i);
+                    refreshMaterialList();
+                }
+            });
+
+            const typeSelector = document.getElementById('material-type-selector');
+            if (typeSelector) {
+                toggleMaterialFields(parseInt(typeSelector.value));
+                typeSelector.addEventListener('change', () => toggleMaterialFields(parseInt(typeSelector.value)));
+            }
+        });
+    </script>
+}

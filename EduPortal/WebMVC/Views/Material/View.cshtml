@@ -1,0 +1,72 @@
+﻿@using EduPortal.Data.Models.Enum
+@model EduPortal.Logic.DTOs.SharedDTO.MaterialDTO
+
+@{
+    ViewData["Title"] = Model.MaterialName;
+}
+<div class="container my-4">
+<div class="card shadow border-success mb-4">
+    <div class="card-body">
+        <h2 class="card-title text-success mb-3">@Model.MaterialName</h2>
+        <hr class="border-success" />
+
+        <div class="material-content mb-4">
+            @switch (Model.MaterialType)
+            {
+                case MaterialType.Video:
+                    <div class="mb-4 p-3 border rounded bg-light">
+                        <p class="fw-semibold mb-2">Watch Video</p>
+                        <p><strong>Duration:</strong> <span class="text-muted">@TimeSpan.FromSeconds(Model.DurationInSeconds).ToString(@"hh\:mm\:ss")</span></p>
+                        <p><strong>Quality:</strong> <span class="text-muted">@Model.Quality</span></p>
+                        <a href="@Model.ResourceUrl" target="_blank" rel="noopener noreferrer" class="btn btn-success w-100 mt-2">Open Video</a>
+                    </div>
+                    break;
+
+                case MaterialType.Book:
+                    <div class="mb-4 p-3 border rounded bg-light">
+                        <p><strong>Title:</strong> <span class="text-muted">@Model.BookTitle</span></p>
+                        <p><strong>Author:</strong> <span class="text-muted">@Model.Author</span></p>
+                        <p><strong>Publication Year:</strong> <span class="text-muted">@Model.PublicationYear</span></p>
+                        <p><strong>Number of Pages:</strong> <span class="text-muted">@Model.NumberOfPages</span></p>
+                        <p><strong>Format:</strong> <span class="text-muted">@Model.Format</span></p>
+                        @if (!string.IsNullOrWhiteSpace(Model.FilePath))
+                        {
+                            <a href="@Model.FilePath" download class="btn btn-success w-100 mt-2">Download Book</a>
+                        }
+                    </div>
+                    break;
+
+                case MaterialType.Article:
+                    <div class="mb-4 p-3 border rounded bg-light">
+                        <p><strong>Publication Year:</strong> <span class="text-muted">@Model.PublicationYear</span></p>
+                        @if (!string.IsNullOrWhiteSpace(Model.ResourceUrl))
+                        {
+                            <a href="@Model.ResourceUrl" target="_blank" rel="noopener noreferrer" class="btn btn-success w-100 mt-2">Read Article</a>
+                        }
+                    </div>
+                    break;
+            }
+        </div>
+
+        <hr class="border-success" />
+
+        <div class="completion-form mt-4">
+            @if (Model.IsCompleted)
+            {
+                <div class="alert alert-success text-center py-2">
+                    You have already completed this material.
+                </div>
+            }
+            else
+            {
+                <form asp-action="MarkAsComplete" method="post" class="d-flex gap-2">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="materialId" value="@Model.MaterialId" />
+                    <input type="hidden" name="courseId" value="@Model.CourseId" />
+                    <button type="submit" class="btn btn-success w-100 fw-semibold">Mark as Complete</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+</div>

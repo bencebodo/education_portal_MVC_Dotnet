@@ -1,0 +1,9 @@
+﻿@model IEnumerable<EduPortal.Logic.DTOs.SharedDTO.SkillDTO>
+
+@foreach (var skill in Model)
+{
+    <div class="p-2 border rounded mb-2 d-flex justify-content-between align-items-center">
+        <span>@skill.SkillName</span>
+        <button type="button" class="btn btn-sm btn-outline-success" onclick="addExistingSkill(@skill.SkillId, '@skill.SkillName')" data-testid = "addSkill-@skill.SkillName">Add to Course</button>
+    </div>
+}

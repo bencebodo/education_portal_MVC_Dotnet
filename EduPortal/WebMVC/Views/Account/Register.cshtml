@@ -1,0 +1,112 @@
+﻿@model EduPortal.Logic.DTOs.IdentityDTOs.RegisterDTO
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="container my-4" style="max-width: 500px;">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="card-title mb-4 text-center">Register</h2>
+
+            @if (TempData["RegisterError"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["RegisterError"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+			}
+
+            <form asp-action="Register" method="post" novalidate>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">User name</label>
+                    <input asp-for="UserName" class="form-control" data-testid="regUsername" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Email</label>
+                    <input asp-for="Email" type="email" class="form-control" data-testid="regEmail" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">First name</label>
+                    <input asp-for="FirstName" class="form-control" data-testid="regFirstName" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Last name</label>
+                    <input asp-for="LastName" class="form-control" data-testid="regLastName" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Date of birth</label>
+                    <input asp-for="DateOfBirth" type="date" class="form-control" data-testid="regBirth" />
+                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Password</label>
+                    <div class="input-group">
+                        <input asp-for="Password" type="password" class="form-control" data-testid="regPassword" />
+                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                onclick="togglePassword('Password', this)">
+                            Show
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Confirm Password</label>
+                    <div class="input-group">
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" data-testid="regConfirmPassword" />
+                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                onclick="togglePassword('ConfirmPassword', this)">
+                            Show
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <div class="form-text">
+                    <p>Passwords must meet the following criteria:</p>
+                    <ul>
+                        <li>Contain at least one digit (0-9).</li>
+                        <li>Contain at least one lowercase letter (a-z).</li>
+                        <li>Contain at least one uppercase letter (A-Z).</li>
+                        <li>Be at least 6 characters long.</li>
+                    </ul>
+                </div>
+
+                <input type="hidden" asp-for="Role" value="Student" />
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success w-50" data-testid="regSubmit">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+	<script>
+        function togglePassword(inputId, btn) {
+                const input = document.getElementById(inputId);
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    btn.textContent = "Hide";
+                } else {
+                    input.type = "password";
+                    btn.textContent = "Show";
+                }
+            }
+	</script>
+}
+

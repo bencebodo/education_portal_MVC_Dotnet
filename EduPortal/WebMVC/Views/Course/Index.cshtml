@@ -1,0 +1,70 @@
+﻿@model EduPortal.Logic.DTOs.CourseDetailsDTOs.CourseDetailsDTO
+
+@{
+    ViewData["Title"] = Model.CourseName;
+}
+
+<div class="container my-4 style="max-width: 900px;">
+
+    @if (Model.OverallProgressPercentage >= 100)
+    {
+        <div class="alert alert-success shadow-sm text-center position-sticky top-0 mt-2" style="z-index:1050;">
+            <h5>Congratulations! You have successfully completed this course!</h5>
+        </div>
+    }
+
+    <div class="card shadow-sm mb-4 border-success">
+        <div class="card-body">
+            <h1 class="card-title mb-2 text-success">@Model.CourseName</h1>
+            <h6 class="text-muted mb-4">Created by: @Model.CreatorName</h6>
+
+            <h5 class="mb-3 text-uppercase text-muted">Learning Materials</h5>
+            @if (Model.Materials.Any())
+            {
+                <div class="row g-3 mb-4">
+                    @foreach (var material in Model.Materials)
+                    {
+                        <div class="col-md-6">
+                            <div class="card h-100 shadow-sm border-success">
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <a asp-controller="Material" asp-action="View"
+                                           asp-route-materialId="@material.MaterialId"
+                                           asp-route-courseId="@Model.CourseId"
+                                           class="btn btn-outline-success btn-sm" data-testid = "material-@material.MaterialName">
+                                            @material.MaterialName
+                                        </a>
+                                        <span class="me-2 @(material.IsCompleted ? "text-success" : "text-muted")">
+                                            @(material.IsCompleted ? "Completed" : "Not completed")
+                                        </span>
+                                    </div>
+                                    <span class="badge bg-success text-white">@material.MaterialType</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">No materials available for this course.</p>
+            }
+
+            <h5 class="mb-3 text-uppercase text-muted mt-4">Acquirable Skills</h5>
+            @if (Model.AcquirableSkills.Any())
+            {
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    @foreach (var skill in Model.AcquirableSkills)
+                    {
+                        <span class="badge bg-success text-white">@skill</span>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">This course has no acquirable skills.</p>
+            }
+
+        </div>
+    </div>
+</div>

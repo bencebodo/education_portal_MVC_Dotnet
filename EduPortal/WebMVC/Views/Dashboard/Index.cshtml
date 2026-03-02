@@ -1,0 +1,177 @@
+﻿@model EduPortal.Logic.DTOs.DashboardDTOs.DashboardDTO
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container mt-4">
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" id="successAlert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorAlert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <script>
+        setTimeout(() => {
+            const successAlert = document.getElementById('successAlert');
+            if (successAlert) {
+                const bsAlert = bootstrap.Alert.getOrCreateInstance(successAlert);
+                bsAlert.close();
+            }
+            const errorAlert = document.getElementById('errorAlert');
+            if (errorAlert) {
+                const bsAlert = bootstrap.Alert.getOrCreateInstance(errorAlert);
+                bsAlert.close();
+            }
+        }, 3000);
+    </script>
+
+    <div class="row">
+        <div class="col-md-3">
+            @if (Model.DashboardProfileDTO != null)
+            {
+                @await Html.PartialAsync("_ProfileSummaryPartial", Model.DashboardProfileDTO)
+            }
+        </div>
+
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <ul class="nav nav-tabs" id="courseNav" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="enrolled-tab" data-bs-target="#enrolledSlide" data-bs-toggle="tab" type="button" role="tab">Enrolled</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="completed-tab" data-bs-target="#completedSlide" data-bs-toggle="tab" type="button" role="tab">Completed</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="available-tab" data-bs-target="#availableSlide" data-bs-toggle="tab" type="button" role="tab">Available</button>
+                    </li>
+                </ul>
+
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-success" id="toggleViewBtn">Switch to Editor View</button>
+                    <a asp-controller="Course" asp-action="Edit" class="btn btn-success">Create Course</a>
+                </div>
+            </div>
+
+            <div id="courseCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="8000">
+                <div class="carousel-inner">
+
+                    <div class="carousel-item active" id="enrolledSlide">
+                        <h2>Enrolled Courses</h2>
+                        <div class="d-flex flex-column gap-3 py-2">
+                            @if (Model.EnrolledCourses?.Any() == true)
+                            {
+                                @foreach (var course in Model.EnrolledCourses)
+                                {
+                                    @await Html.PartialAsync("_CourseCardPartial", course, new ViewDataDictionary(ViewData) { { "CardContext", "enrolled-card" } })
+                                }
+                            }
+                            else
+                            {
+                                <div class="card text-center p-3">
+                                    <p class="mb-3">You are not enrolled in any courses yet.</p>
+                                    <a class="btn btn-outline-success mt-auto" data-bs-target="#courseCarousel" data-bs-slide-to="2">Go to Available Courses</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="carousel-item" id="completedSlide">
+                        <h2>Completed Courses</h2>
+                        <div class="d-flex flex-column gap-3 py-2">
+                            @if (Model.CompletedCourses?.Any() == true)
+                            {
+                                @foreach (var course in Model.CompletedCourses)
+                                {
+                                    @await Html.PartialAsync("_CourseCardPartial", course, new ViewDataDictionary(ViewData) { { "CardContext", "completed-card" } })
+                                }
+                            }
+                            else
+                            {
+                                <div class="card text-center p-3">
+                                    <p class="mb-3">You haven't completed any courses yet.</p>
+                                    <a class="btn btn-outline-success mt-auto" data-bs-target="#courseCarousel" data-bs-slide-to="2">Go to Available Courses</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="carousel-item" id="availableSlide">
+                        <h2>Available Courses</h2>
+                        <div class="d-flex flex-column gap-3 py-2">
+                            @if (Model.AvailableCourses?.Any() == true)
+                            {
+                                @foreach (var course in Model.AvailableCourses)
+                                {
+                                    @await Html.PartialAsync("_CourseCardPartial", course, new ViewDataDictionary(ViewData) { { "CardContext", "available-card" } })
+                                }
+                            }
+
+                            <div class="card text-center p-3">
+                                <p class="mb-3">Create a new course</p>
+                                <a asp-controller="Course" asp-action="Edit" class="btn btn-success mt-auto">Create</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        let editorMode = false;
+
+        document.getElementById("toggleViewBtn").addEventListener("click", function () {
+            editorMode = !editorMode;
+
+            const normalViews = document.querySelectorAll(".available-card .normal-view");
+            const editorViews = document.querySelectorAll(".available-card .editor-view");
+
+            if (editorMode) {
+                normalViews.forEach(el => el.classList.add("d-none"));
+                editorViews.forEach(el => el.classList.remove("d-none"));
+                this.textContent = "Switch to Normal View";
+            } else {
+                normalViews.forEach(el => el.classList.remove("d-none"));
+                editorViews.forEach(el => el.classList.add("d-none"));
+                this.textContent = "Switch to Editor View";
+            }
+        });
+
+        const carouselEl = document.querySelector('#courseCarousel');
+        const carousel = new bootstrap.Carousel(carouselEl, {
+            interval: 8000,
+            ride: 'carousel'
+        });
+
+        document.querySelectorAll('#courseNav button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-bs-target');
+                const items = Array.from(carouselEl.querySelectorAll('.carousel-item'));
+                const index = items.findIndex(i => '#' + i.id === targetId);
+                carousel.to(index);
+            });
+        });
+
+        carouselEl.addEventListener('slid.bs.carousel', () => {
+            const items = Array.from(carouselEl.querySelectorAll('.carousel-item'));
+            const activeIndex = items.findIndex(i => i.classList.contains('active'));
+            const navButtons = document.querySelectorAll('#courseNav button');
+            navButtons.forEach((btn, i) => btn.classList.toggle('active', i === activeIndex));
+        });
+    </script>
+}

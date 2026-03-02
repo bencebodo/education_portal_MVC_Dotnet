@@ -1,0 +1,19 @@
+﻿@using EduPortal.Logic.DTOs.DashboardDTOs
+
+@model DashboardProfileDTO
+
+<div class="card shadow-sm border-success mb-4" style="max-width: 600px;">
+    <div class="card-body text-center">
+        <img src="~/images/profile/BUProfile.svg"
+             alt="@Model.FirstName"
+             class="profile-picture rounded-circle mb-3 border border-success"
+             style="width:120px; height:120px; object-fit:cover;" />
+
+        <h2 class="card-title text-success mb-3">Hi, @Model.FirstName!</h2>
+
+        <hr class="border-success" />
+
+        <p class="mb-2"><strong>Completed courses:</strong> <span class="text-muted">@Model.CompletedCoursesCount</span></p>
+        <p class="mb-0"><strong>Acquired skills:</strong> <span class="text-muted">@Model.TotalSkillsCount</span></p>
+    </div>
+</div>
