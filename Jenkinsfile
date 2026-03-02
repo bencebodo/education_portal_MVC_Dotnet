@@ -22,6 +22,7 @@ pipeline {
                 }
             }
         }
+        //trigger
         stage('Run Tests') {
             steps {
                 dir('EduPortal') {
