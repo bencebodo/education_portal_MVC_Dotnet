@@ -53,7 +53,7 @@ def updateGitHubStatus(String contextName, String msg, String state) {
     step([
         $class: 'GitHubCommitStatusSetter',
         contextSource: [
-            $class: 'StaticContextSource', 
+            $class: 'ManuallyEnteredCommitContextSource', // <--- EZT JAVÍTOTTUK!
             context: contextName
         ],
         statusResultSource: [
