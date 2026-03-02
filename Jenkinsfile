@@ -25,8 +25,10 @@ pipeline {
 
         stage('Run Tests') {
             steps {
+                dir('EduPortal') {
                 echo 'Test starts...'
                 sh 'dotnet test --no-build --configuration Release'
+                }
             }
         }
     }
