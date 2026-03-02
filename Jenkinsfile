@@ -27,8 +27,11 @@ pipeline {
                 script{
                 updateGitHubStatus('ci/jenkins/unit-tests', 'Unit tests started...', 'PENDING')
                 }
-                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    sh 'dotnet test EduPortal.UnitTests/EduPortal.UnitTests.csproj'
+
+                dir('EduPortal') {
+                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                        sh 'dotnet test EduPortal.UnitTests/EduPortal.UnitTests.csproj'
+                    }
                 }
         
                 script {
