@@ -15,7 +15,7 @@ services:
 
   webapp:
     build:
-      context: .                  
+      context: ./EduPortal                 
       dockerfile: WebMVC/Dockerfile 
     container_name: mvc_lab_app
     ports:
