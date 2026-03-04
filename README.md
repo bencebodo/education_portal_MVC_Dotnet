@@ -63,3 +63,23 @@ Because the application leverages the Repository Pattern, the business logic is 
    ```bash
    git clone [https://github.com/yourusername/EduPortal.git](https://github.com/yourusername/EduPortal.git)
    cd EduPortal
+2. Restore NuGet packages
+   ```bash
+   dotnet restore
+
+3. Apply Database Migrations (EF Core)
+ Ensure your connection string in appsettings.json is correct for your local environment 
+   ```bash
+   dotnet ef database update
+
+4. Run the application
+   ```bash
+   dotnet run --project EduPortal.Web
+
+5. Execute Unit Tests (in a separate terminal)
+   ```bash
+   dotnet test
+
+Developer
+
+Bence Bodo - QA Automation Engineer / SDET
